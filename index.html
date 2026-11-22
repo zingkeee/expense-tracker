@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expense Tracker</title>
+<meta name="description" content="A simple expense tracker that saves your spending on your own device.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <h1>Expense Tracker</h1>
+    <label class="month">Month <input type="month" id="month" required></label>
+  </header>
+
+  <section class="summary" aria-label="Month summary">
+    <p class="muted">Spent this month</p>
+    <p class="big" id="total">₱0.00</p>
+    <div class="meter" role="progressbar" aria-label="Budget used" aria-valuemin="0" aria-valuemax="100" id="meter"><span id="meterFill"></span></div>
+    <p id="budgetMsg" class="budget-msg">Set a monthly budget to track it.</p>
+    <label class="budget">Monthly budget (₱) <input type="number" id="budget" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 5000"></label>
+  </section>
+
+  <div class="cols">
+    <section class="panel" aria-labelledby="formTitle">
+      <h2 id="formTitle">Add expense</h2>
+      <form id="form">
+        <label>Amount (₱) <input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></label>
+        <label>Category <select id="category"></select></label>
+        <label>Date <input type="date" id="date" required></label>
+        <label>Note <input type="text" id="note" maxlength="80" placeholder="What was it for?"></label>
+        <div class="row">
+          <button type="submit" class="btn primary" id="submitBtn">Add expense</button>
+          <button type="button" class="btn" id="cancelBtn" hidden>Cancel</button>
+        </div>
+      </form>
+
+      <h2>Where it went</h2>
+      <div id="bars" class="bars"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="listTitle">
+      <h2 id="listTitle">Expenses</h2>
+      <div class="filters">
+        <select id="filterCategory" aria-label="Filter by category"><option value="">All categories</option></select>
+        <input type="search" id="search" placeholder="Search notes" aria-label="Search notes">
+        <button type="button" class="btn" id="exportBtn">Export CSV</button>
+      </div>
+      <ul id="list" class="list"></ul>
+      <p id="empty" class="muted" hidden>No expenses match. Add one to get started.</p>
+    </section>
+  </div>
+</main>
+<div id="toast" role="status"></div>
+<script src="js/storage.js"></script>
+<script src="js/chart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

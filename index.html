@@ -4,60 +4,98 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Expense Tracker</title>
-<meta name="description" content="A simple expense tracker that saves your spending on your own device.">
+<meta name="description" content="Track income and spending, set a budget, and see where your money goes. Your data stays on your device.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></symbol>
+<symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/></symbol>
+</defs></svg>
+
 <main class="app">
   <header class="top">
     <h1>Expense Tracker</h1>
-    <label class="month">Month <input type="month" id="month" required></label>
+    <div class="monthnav">
+      <button class="icon" id="prevMonth" aria-label="Previous month"><svg class="ic"><use href="#i-left"/></svg></button>
+      <span id="monthLabel" aria-live="polite"></span>
+      <button class="icon" id="nextMonth" aria-label="Next month"><svg class="ic"><use href="#i-right"/></svg></button>
+    </div>
   </header>
 
-  <section class="summary" aria-label="Month summary">
+  <section class="glass hero" aria-label="Month summary">
     <p class="muted">Spent this month</p>
-    <p class="big" id="total">₱0.00</p>
+    <p class="big" id="spent">₱0.00</p>
     <div class="meter" role="progressbar" aria-label="Budget used" aria-valuemin="0" aria-valuemax="100" id="meter"><span id="meterFill"></span></div>
     <p id="budgetMsg" class="budget-msg">Set a monthly budget to track it.</p>
-    <label class="budget">Monthly budget (₱) <input type="number" id="budget" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 5000"></label>
+    <div class="stats">
+      <div><p class="muted">Income</p><p class="stat ok" id="income">₱0.00</p></div>
+      <div><p class="muted">Balance</p><p class="stat" id="balance">₱0.00</p></div>
+      <label class="budget">Monthly budget (₱)<input type="number" id="budget" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 5000"></label>
+    </div>
   </section>
 
   <div class="cols">
-    <section class="panel" aria-labelledby="formTitle">
-      <h2 id="formTitle">Add expense</h2>
-      <form id="form">
-        <label>Amount (₱) <input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></label>
-        <label>Category <select id="category"></select></label>
-        <label>Date <input type="date" id="date" required></label>
-        <label>Note <input type="text" id="note" maxlength="80" placeholder="What was it for?"></label>
-        <div class="row">
-          <button type="submit" class="btn primary" id="submitBtn">Add expense</button>
-          <button type="button" class="btn" id="cancelBtn" hidden>Cancel</button>
+    <div class="col">
+      <section class="glass" aria-labelledby="formTitle">
+        <h2 id="formTitle">Add entry</h2>
+        <form id="form">
+          <div class="seg" role="radiogroup" aria-label="Entry type">
+            <label><input type="radio" name="type" value="expense" checked><span>Expense</span></label>
+            <label><input type="radio" name="type" value="income"><span>Income</span></label>
+          </div>
+          <label>Amount (₱)<input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></label>
+          <label>Category<select id="category"></select></label>
+          <label>Date<input type="date" id="date" required></label>
+          <label>Note<input type="text" id="note" maxlength="80" placeholder="What was it for?"></label>
+          <label class="check" id="repeatRow"><input type="checkbox" id="repeat"> Repeat every month</label>
+          <div class="row">
+            <button type="submit" class="btn primary" id="submitBtn">Add expense</button>
+            <button type="button" class="btn" id="cancelBtn" hidden>Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="glass" id="repeatPanel" aria-labelledby="repTitle" hidden>
+        <h2 id="repTitle">Repeats every month</h2>
+        <ul class="list" id="repeatList"></ul>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="glass" aria-labelledby="listTitle">
+        <h2 id="listTitle">Entries</h2>
+        <div class="filters">
+          <select id="filterCategory" aria-label="Filter by category"><option value="">All categories</option></select>
+          <input type="search" id="search" placeholder="Search notes" aria-label="Search notes">
+          <button type="button" class="btn" id="exportBtn"><svg class="ic"><use href="#i-down"/></svg>CSV</button>
         </div>
-      </form>
+        <ul id="list" class="list"></ul>
+        <p id="empty" class="muted" hidden>Nothing here yet. Add your first entry.</p>
+      </section>
 
-      <h2>Where it went</h2>
-      <div id="bars" class="bars"></div>
-    </section>
-
-    <section class="panel" aria-labelledby="listTitle">
-      <h2 id="listTitle">Expenses</h2>
-      <div class="filters">
-        <select id="filterCategory" aria-label="Filter by category"><option value="">All categories</option></select>
-        <input type="search" id="search" placeholder="Search notes" aria-label="Search notes">
-        <button type="button" class="btn" id="exportBtn">Export CSV</button>
-      </div>
-      <ul id="list" class="list"></ul>
-      <p id="empty" class="muted" hidden>No expenses match. Add one to get started.</p>
-    </section>
+      <section class="glass" aria-labelledby="chartTitle">
+        <h2 id="chartTitle">Where it went</h2>
+        <p class="muted" id="catEmpty" hidden>No spending this month.</p>
+        <div id="catWrap" class="chart"><canvas id="catCanvas" role="img" aria-label="Spending by category"></canvas></div>
+        <h2 class="sp">Last 6 months</h2>
+        <div class="chart tall"><canvas id="trendCanvas" role="img" aria-label="Income and spending, last 6 months"></canvas></div>
+        <p class="muted" id="chartNote"></p>
+      </section>
+    </div>
   </div>
 </main>
 <div id="toast" role="status"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="js/storage.js"></script>
-<script src="js/chart.js"></script>
+<script src="js/charts.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

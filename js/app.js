@@ -8,6 +8,7 @@ const today = () => new Date().toLocaleDateString('en-CA');           // YYYY-MM
 const pad = n => String(n).padStart(2, '0');
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()));
 const icon = name => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('class', 'ic'); s.setAttribute('aria-hidden', 'true'); const u = document.createElementNS('http://www.w3.org/2000/svg', 'use'); u.setAttribute('href', '#i-' + name); s.append(u); return s; };
+const chip = cat => { const c = document.createElement('span'); c.className = 'chip'; c.setAttribute('aria-hidden', 'true'); c.textContent = cat[0]; let h = 0; for (const ch of cat) h = (h * 31 + ch.charCodeAt(0)) % 360; c.style.setProperty('--h', h); return c; };
 const monthLabel = ym => { const [y, m] = ym.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString('en-PH', { month: 'long', year: 'numeric' }); };
 const shiftMonth = (ym, d) => { const [y, m] = ym.split('-').map(Number); const t = new Date(y, m - 1 + d, 1); return `${t.getFullYear()}-${pad(t.getMonth() + 1)}`; };
 
@@ -149,7 +150,10 @@ function render() {
   $('spent').textContent = peso(spent);
   $('income').textContent = peso(income);
   $('balance').textContent = peso(balance);
-  $('balance').className = 'stat' + (balance < 0 ? ' neg' : '');
+  $('balance').className = 'num' + (balance < 0 ? ' neg' : '');
+  const totals = {}; for (const x of inMonth) if (x.type === 'expense') totals[x.category] = (totals[x.category] || 0) + x.amount;
+  const top = Object.entries(totals).sort((a, b) => b[1] - a[1])[0];
+  $('spentNote').textContent = top ? `Most on ${top[0]}: ${peso(top[1])}` : 'Nothing spent yet this month.';
 
   const meter = $('meter'), msg = $('budgetMsg');
   meter.className = 'meter'; msg.className = 'budget-msg';
@@ -180,7 +184,7 @@ function render() {
     edit.setAttribute('aria-label', `Edit ${x.category} entry`); edit.addEventListener('click', () => startEdit(x));
     const del = document.createElement('button'); del.className = 'btn small danger'; del.append(icon('trash'), 'Delete');
     del.setAttribute('aria-label', `Delete ${x.category} entry`); del.addEventListener('click', () => remove(x));
-    acts.append(edit, del); li.append(left, amt, acts); list.append(li);
+    acts.append(edit, del); li.append(chip(x.category), left, amt, acts); list.append(li);
   }
 
   // repeating panel
@@ -196,7 +200,7 @@ function render() {
     const acts = document.createElement('div'); acts.className = 'acts';
     const stop = document.createElement('button'); stop.className = 'btn small danger'; stop.textContent = 'Stop repeating';
     stop.setAttribute('aria-label', `Stop repeating ${t.category}`); stop.addEventListener('click', () => stopRepeat(t));
-    acts.append(stop); li.append(left, amt, acts); rl.append(li);
+    acts.append(stop); li.append(chip(t.category), left, amt, acts); rl.append(li);
   }
 
   // charts

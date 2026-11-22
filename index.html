@@ -7,7 +7,7 @@
 <meta name="description" content="Track income and spending, set a budget, and see where your money goes. Your data stays on your device.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -21,75 +21,89 @@
 </defs></svg>
 
 <main class="app">
-  <header class="top">
-    <h1>Expense Tracker</h1>
-    <div class="monthnav">
+  <header class="head">
+    <p class="app-name">Expense Tracker</p>
+    <div class="monthbar">
       <button class="icon" id="prevMonth" aria-label="Previous month"><svg class="ic"><use href="#i-left"/></svg></button>
-      <span id="monthLabel" aria-live="polite"></span>
+      <h1 id="monthLabel" aria-live="polite"></h1>
       <button class="icon" id="nextMonth" aria-label="Next month"><svg class="ic"><use href="#i-right"/></svg></button>
     </div>
   </header>
 
-  <section class="glass hero" aria-label="Month summary">
-    <p class="muted">Spent this month</p>
-    <p class="big" id="spent">₱0.00</p>
-    <div class="meter" role="progressbar" aria-label="Budget used" aria-valuemin="0" aria-valuemax="100" id="meter"><span id="meterFill"></span></div>
-    <p id="budgetMsg" class="budget-msg">Set a monthly budget to track it.</p>
-    <div class="stats">
-      <div><p class="muted">Income</p><p class="stat ok" id="income">₱0.00</p></div>
-      <div><p class="muted">Balance</p><p class="stat" id="balance">₱0.00</p></div>
-      <label class="budget">Monthly budget (₱)<input type="number" id="budget" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 5000"></label>
-    </div>
-  </section>
+  <div class="bento">
+    <section class="tile t-spent" aria-label="Spent this month">
+      <p class="lbl">Spent</p>
+      <p class="big" id="spent">₱0.00</p>
+      <p class="note" id="spentNote"></p>
+    </section>
 
-  <div class="cols">
-    <div class="col">
-      <section class="glass" aria-labelledby="formTitle">
-        <h2 id="formTitle">Add entry</h2>
-        <form id="form">
-          <div class="seg" role="radiogroup" aria-label="Entry type">
-            <label><input type="radio" name="type" value="expense" checked><span>Expense</span></label>
-            <label><input type="radio" name="type" value="income"><span>Income</span></label>
-          </div>
-          <label>Amount (₱)<input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></label>
-          <label>Category<select id="category"></select></label>
-          <label>Date<input type="date" id="date" required></label>
-          <label>Note<input type="text" id="note" maxlength="80" placeholder="What was it for?"></label>
-          <label class="check" id="repeatRow"><input type="checkbox" id="repeat"> Repeat every month</label>
-          <div class="row">
-            <button type="submit" class="btn primary" id="submitBtn">Add expense</button>
-            <button type="button" class="btn" id="cancelBtn" hidden>Cancel</button>
-          </div>
-        </form>
-      </section>
+    <section class="tile t-income" aria-label="Income this month">
+      <p class="lbl">Money in</p>
+      <p class="num" id="income">₱0.00</p>
+    </section>
 
-      <section class="glass" id="repeatPanel" aria-labelledby="repTitle" hidden>
-        <h2 id="repTitle">Repeats every month</h2>
-        <ul class="list" id="repeatList"></ul>
-      </section>
-    </div>
+    <section class="tile t-balance" aria-label="Balance this month">
+      <p class="lbl">Left over</p>
+      <p class="num" id="balance">₱0.00</p>
+    </section>
 
-    <div class="col">
-      <section class="glass" aria-labelledby="listTitle">
-        <h2 id="listTitle">Entries</h2>
-        <div class="filters">
-          <select id="filterCategory" aria-label="Filter by category"><option value="">All categories</option></select>
-          <input type="search" id="search" placeholder="Search notes" aria-label="Search notes">
-          <button type="button" class="btn" id="exportBtn"><svg class="ic"><use href="#i-down"/></svg>CSV</button>
+    <section class="tile t-budget" aria-label="Budget">
+      <div class="split">
+        <h2>Budget</h2>
+        <label class="budget">Monthly limit (₱)<input type="number" id="budget" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 5000"></label>
+      </div>
+      <div class="meter" role="progressbar" aria-label="Budget used" aria-valuemin="0" aria-valuemax="100" id="meter"><span id="meterFill"></span></div>
+      <p id="budgetMsg" class="budget-msg">Set a monthly budget to track it.</p>
+    </section>
+
+    <section class="tile t-form" aria-labelledby="formTitle">
+      <h2 id="formTitle">Add entry</h2>
+      <form id="form">
+        <div class="seg" role="radiogroup" aria-label="Entry type">
+          <label><input type="radio" name="type" value="expense" checked><span>Expense</span></label>
+          <label><input type="radio" name="type" value="income"><span>Income</span></label>
         </div>
-        <ul id="list" class="list"></ul>
-        <p id="empty" class="muted" hidden>Nothing here yet. Add your first entry.</p>
-      </section>
+        <div class="two">
+          <label>Amount (₱)<input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></label>
+          <label>Date<input type="date" id="date" required></label>
+        </div>
+        <label>Category<select id="category"></select></label>
+        <label>Note<input type="text" id="note" maxlength="80" placeholder="What was it for?"></label>
+        <label class="check" id="repeatRow"><input type="checkbox" id="repeat"> Repeat every month</label>
+        <div class="row">
+          <button type="submit" class="btn primary" id="submitBtn">Add expense</button>
+          <button type="button" class="btn" id="cancelBtn" hidden>Cancel</button>
+        </div>
+      </form>
+    </section>
 
-      <section class="glass" aria-labelledby="chartTitle">
-        <h2 id="chartTitle">Where it went</h2>
-        <p class="muted" id="catEmpty" hidden>No spending this month.</p>
-        <div id="catWrap" class="chart"><canvas id="catCanvas" role="img" aria-label="Spending by category"></canvas></div>
-        <h2 class="sp">Last 6 months</h2>
-        <div class="chart tall"><canvas id="trendCanvas" role="img" aria-label="Income and spending, last 6 months"></canvas></div>
-        <p class="muted" id="chartNote"></p>
-      </section>
-    </div>
+    <section class="tile t-cat" aria-labelledby="chartTitle">
+      <h2 id="chartTitle">Where it went</h2>
+      <p class="muted" id="catEmpty" hidden>No spending this month.</p>
+      <div id="catWrap" class="chart"><canvas id="catCanvas" role="img" aria-label="Spending by category"></canvas></div>
+      <p class="muted" id="chartNote"></p>
+    </section>
+
+    <section class="tile t-list" aria-labelledby="listTitle">
+      <h2 id="listTitle">Entries</h2>
+      <div class="filters">
+        <select id="filterCategory" aria-label="Filter by category"><option value="">All categories</option></select>
+        <input type="search" id="search" placeholder="Search notes" aria-label="Search notes">
+        <button type="button" class="btn" id="exportBtn"><svg class="ic"><use href="#i-down"/></svg>CSV</button>
+      </div>
+      <ul id="list" class="list"></ul>
+      <p id="empty" class="muted" hidden>Nothing here yet. Add your first entry.</p>
+    </section>
+
+    <section class="tile t-trend" aria-labelledby="trendTitle">
+      <h2 id="trendTitle">Last 6 months</h2>
+      <div class="chart tall"><canvas id="trendCanvas" role="img" aria-label="Income and spending, last 6 months"></canvas></div>
+    </section>
+
+    <section class="tile t-repeat" id="repeatPanel" aria-labelledby="repTitle" hidden>
+      <h2 id="repTitle">Repeats every month</h2>
+      <ul class="list" id="repeatList"></ul>
+    </section>
   </div>
 </main>
 <div id="toast" role="status"></div>

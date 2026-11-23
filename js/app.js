@@ -8,6 +8,7 @@ const today = () => new Date().toLocaleDateString('en-CA');           // YYYY-MM
 const pad = n => String(n).padStart(2, '0');
 const uid = () => (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()));
 const icon = name => { const s = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); s.setAttribute('class', 'ic'); s.setAttribute('aria-hidden', 'true'); const u = document.createElementNS('http://www.w3.org/2000/svg', 'use'); u.setAttribute('href', '#i-' + name); s.append(u); return s; };
+const lbl = t => { const e = document.createElement('span'); e.className = 'lb'; e.textContent = t; return e; };
 const hueOf = cat => { let h = 0; for (const ch of cat) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; };
 const chip = cat => { const c = document.createElement('span'); c.className = 'chip'; c.setAttribute('aria-hidden', 'true'); c.textContent = cat[0]; c.style.setProperty('--h', hueOf(cat)); return c; };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -268,9 +269,9 @@ function render() {
     const amt = document.createElement('div'); amt.className = 'amt' + (x.type === 'income' ? ' ok' : '');
     amt.textContent = (x.type === 'income' ? '+' : '') + peso(x.amount);
     const acts = document.createElement('div'); acts.className = 'acts';
-    const edit = document.createElement('button'); edit.className = 'btn small'; edit.append(icon('edit'), 'Edit');
+    const edit = document.createElement('button'); edit.className = 'btn small'; edit.append(icon('edit'), lbl('Edit'));
     edit.setAttribute('aria-label', `Edit ${x.category} entry`); edit.addEventListener('click', () => startEdit(x));
-    const del = document.createElement('button'); del.className = 'btn small danger'; del.append(icon('trash'), 'Delete');
+    const del = document.createElement('button'); del.className = 'btn small danger'; del.append(icon('trash'), lbl('Delete'));
     del.setAttribute('aria-label', `Delete ${x.category} entry`); del.addEventListener('click', () => remove(x));
     acts.append(edit, del); li.append(chip(x.category), left, amt, acts); list.append(li);
   }
@@ -306,4 +307,11 @@ function render() {
 }
 
 materialize();
+// floating Add button on phones: jumps to the form, hides while the form is on screen
+$('fab').addEventListener('click', () => {
+  $('form').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+  $('amount').focus({ preventScroll: true });
+});
+new IntersectionObserver(([e]) => $('fab').classList.toggle('hide', e.isIntersecting), { threshold: 0.2 }).observe(document.querySelector('.t-form'));
+
 render();

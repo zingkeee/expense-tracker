@@ -196,3 +196,66 @@ dialog::backdrop{background:rgba(10,11,16,.55);backdrop-filter:blur(4px)}
   @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
 }
 @media(prefers-reduced-motion:reduce){.note-row{transition:none}}
+
+/* ================= mobile ================= */
+html{-webkit-text-size-adjust:100%}
+body{-webkit-tap-highlight-color:transparent}
+button,a,label,select,input{touch-action:manipulation}
+.app{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+.num{font-size:clamp(1.15rem,5.2vw,2.1rem);overflow-wrap:anywhere}
+.big{font-size:clamp(2.3rem,11.5vw,5.6rem)}
+
+/* no sticky hover on touch screens */
+@media(hover:none){
+  .btn:hover,.icon:hover{background:transparent;color:var(--fg)}
+  .btn.primary:hover{background:var(--btn);color:var(--on-btn);filter:none}
+  .btn.danger:hover{background:transparent;color:var(--bad)}
+  .btn.solid:hover{background:var(--bad);color:var(--on-bad,#fff);filter:none}
+}
+/* bigger tap targets for fingers */
+@media(pointer:coarse){
+  .btn.small{min-height:44px}
+  .cat span{padding:11px 16px}
+  input[type=date]{-webkit-appearance:none;appearance:none;display:block}
+}
+
+/* floating add button */
+.fab{display:none;position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:9;align-items:center;gap:8px;min-height:52px;padding:0 22px;border-radius:999px;border:0;background:var(--btn);color:var(--on-btn);font:700 1rem var(--font);box-shadow:0 8px 24px rgba(0,0,0,.28);cursor:pointer;transition:opacity .2s,transform .25s cubic-bezier(.34,1.56,.64,1)}
+.fab .ic{width:20px;height:20px}
+.fab.hide{opacity:0;pointer-events:none;transform:translateY(16px) scale(.9)}
+.fab:active{transform:scale(.95)}
+
+@media(max-width:899px){
+  .fab{display:inline-flex}
+  #toast{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+  /* on phones the entries come right after the form, charts after */
+  .t-spent{order:1}.t-income{order:2}.t-balance{order:3}.t-budget{order:4}.t-form{order:5}.t-list{order:6}.t-cat{order:7}.t-trend{order:8}.t-repeat{order:9}
+}
+@media(max-width:600px){
+  .monthbar{justify-content:space-between;flex-wrap:nowrap}
+  h1{flex:1;text-align:center;white-space:nowrap;font-size:clamp(1.6rem,7.6vw,2.4rem)}
+  .head{margin-bottom:14px}
+}
+@media(max-width:560px){
+  .tile{padding:16px;border-radius:22px}
+  .bento{gap:12px}
+  .t-spent{min-height:220px}
+  .t-income,.t-balance{min-height:132px}
+  .acts .lb{display:none}
+  .acts .btn.small:has(.lb){width:44px;padding:0}
+  /* delete dialog becomes a bottom sheet */
+  dialog{margin:auto 0 0;width:100%;max-width:100%;border-radius:28px 28px 0 0}
+  .cd{padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+}
+@media(max-width:559px){
+  .filters{grid-template-columns:minmax(0,1fr) auto}
+  #search{grid-column:1/-1;order:-1}
+}
+@media(max-width:420px){
+  .two{grid-template-columns:minmax(0,1fr)}
+  .budget-top{gap:10px}
+}
+@media(max-width:560px) and (prefers-reduced-motion:no-preference){
+  dialog[open]{animation:sheetUp .35s cubic-bezier(.2,.9,.3,1)}
+  @keyframes sheetUp{from{transform:translateY(100%)}}
+}

@@ -30,7 +30,7 @@ function drawCharts(byCat, trend) {
       type: 'bar',
       data: { labels: rows.map(r => r[0]), datasets: [{ data: rows.map(r => r[1]), backgroundColor: cssVar('--bar'), borderRadius: 6, barThickness: 18 }] },
       options: {
-        indexAxis: 'y', maintainAspectRatio: false, animation: { duration: 250 }, layout: { padding: { right: 90 } },
+        indexAxis: 'y', maintainAspectRatio: false, animation: { duration: 250 }, layout: { padding: { right: innerWidth < 480 ? 74 : 90 } },
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => peso(c.parsed.x) } } },
         scales: { x: { display: false, beginAtZero: true }, y: { grid: { display: false }, border: { display: false }, ticks: { color: fg } } }
       },
@@ -48,7 +48,7 @@ function drawCharts(byCat, trend) {
     options: {
       maintainAspectRatio: false, animation: { duration: 250 },
       plugins: { legend: { labels: { color: fg, usePointStyle: true } }, tooltip: { callbacks: { label: c => `${c.dataset.label}: ${peso(c.parsed.y)}` } } },
-      scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: grid }, ticks: { callback: v => '₱' + (v / 100).toLocaleString('en-PH') } } }
+      scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: grid }, ticks: { callback: v => '₱' + (v / 100 >= 1000 ? +(v / 100000).toFixed(1) + 'k' : v / 100) } } }
     }
   });
 }

@@ -44,6 +44,29 @@ function confirmDelete(x) {
 const monthLabel = ym => { const [y, m] = ym.split('-').map(Number); return new Date(y, m - 1, 1).toLocaleDateString('en-PH', { month: 'long', year: 'numeric' }); };
 const shiftMonth = (ym, d) => { const [y, m] = ym.split('-').map(Number); const t = new Date(y, m - 1 + d, 1); return `${t.getFullYear()}-${pad(t.getMonth() + 1)}`; };
 
+// ---- category picker: pick a category first, then an optional note appears ----
+const getCat = () => document.querySelector('input[name="cat"]:checked')?.value || '';
+const setCat = c => { const r = [...document.querySelectorAll('input[name="cat"]')].find(i => i.value === c); if (r) r.checked = true; };
+const openNote = () => $('noteRow').classList.add('open');
+const closeNote = () => { $('noteRow').classList.remove('open'); $('note').value = ''; };
+function renderCatPicker(t, keep) {
+  const box = $('catPicker'); box.replaceChildren();
+  for (const c of CATS[t]) {
+    const l = document.createElement('label'); l.className = 'cat'; l.style.setProperty('--h', hueOf(c));
+    const i = document.createElement('input'); i.type = 'radio'; i.name = 'cat'; i.value = c;
+    const sp = document.createElement('span'); sp.textContent = c;
+    l.append(i, sp); box.append(l);
+  }
+  $('catHint').hidden = true;
+  if (keep && CATS[t].includes(keep)) { setCat(keep); openNote(); } else closeNote();
+}
+function needCategory() {
+  $('catHint').hidden = false;
+  const b = $('catPicker'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake');
+  b.querySelector('input').focus();
+}
+$('catPicker').addEventListener('change', () => { $('catHint').hidden = true; openNote(); });
+
 let entries = Store.loadEntries();
 let recurring = Store.loadRecurring();   // templates: { id, type, amount, category, note, start, day, skip[] }
 let budget = Store.loadBudget();         // centavos, to avoid decimal rounding bugs
@@ -54,7 +77,7 @@ function fillCategories(select, list, keepFirst) {
   select.replaceChildren(...(first ? [first] : []));
   for (const c of list) { const o = document.createElement('option'); o.value = o.textContent = c; select.append(o); }
 }
-fillCategories($('category'), CATS.expense);
+renderCatPicker('expense');
 fillCategories($('filterCategory'), [...new Set([...CATS.expense, ...CATS.income])], true);
 $('date').value = today();
 $('budget').value = budget ? budget / 100 : '';
@@ -87,14 +110,14 @@ function materialize() {
 // ---- form ----
 function resetForm() {
   editingId = null; $('form').reset(); type = 'expense';
-  fillCategories($('category'), CATS.expense);
+  renderCatPicker('expense');
   $('date').value = today();
   $('formTitle').textContent = 'Add entry';
   $('submitBtn').textContent = 'Add expense';
   $('cancelBtn').hidden = true; $('repeatRow').hidden = false;
 }
 document.querySelectorAll('input[name="type"]').forEach(r => r.addEventListener('change', () => {
-  type = r.value; fillCategories($('category'), CATS[type]);
+  type = r.value; renderCatPicker(type, getCat());
   $('submitBtn').textContent = editingId ? 'Save changes' : 'Add ' + type;
 }));
 
@@ -102,7 +125,8 @@ $('form').addEventListener('submit', e => {
   e.preventDefault();
   const amount = Math.round(parseFloat($('amount').value) * 100);
   if (!(amount > 0)) { $('amount').focus(); return; }
-  const data = { type, amount, category: $('category').value, date: $('date').value, note: $('note').value.trim() };
+  if (!getCat()) { needCategory(); return; }
+  const data = { type, amount, category: getCat(), date: $('date').value, note: $('note').value.trim() };
   if (editingId) {
     entries = entries.map(x => x.id === editingId ? { ...x, ...data } : x);
     justAdded = editingId;
@@ -126,8 +150,8 @@ $('emptyBtn').addEventListener('click', () => { $('form').scrollIntoView({ behav
 function startEdit(x) {
   editingId = x.id; type = x.type;
   document.querySelector(`input[name="type"][value="${x.type}"]`).checked = true;
-  fillCategories($('category'), CATS[x.type]);
-  $('amount').value = x.amount / 100; $('category').value = x.category; $('date').value = x.date; $('note').value = x.note;
+  renderCatPicker(x.type, x.category);
+  $('amount').value = x.amount / 100; $('date').value = x.date; $('note').value = x.note; openNote();
   $('formTitle').textContent = 'Edit entry'; $('submitBtn').textContent = 'Save changes';
   const ft = document.querySelector('.t-form'); ft.classList.remove('flash'); void ft.offsetWidth; ft.classList.add('flash');
   $('cancelBtn').hidden = false; $('repeatRow').hidden = true;

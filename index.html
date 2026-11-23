@@ -81,8 +81,14 @@
           <label>Amount (₱)<input type="number" id="amount" min="0.01" step="0.01" inputmode="decimal" required></label>
           <label>Date<input type="date" id="date" required></label>
         </div>
-        <label>Category<select id="category"></select></label>
-        <label>Note<input type="text" id="note" maxlength="80" placeholder="What was it for?"></label>
+        <fieldset class="cat-field">
+          <legend>Category</legend>
+          <div class="cats" id="catPicker" role="radiogroup" aria-label="Category"></div>
+          <p class="hint" id="catHint" hidden>Pick a category first.</p>
+        </fieldset>
+        <div class="note-row" id="noteRow"><div class="note-inner">
+          <label><span>Note <span class="muted">(optional)</span></span><input type="text" id="note" maxlength="80" placeholder="Add a detail if you like"></label>
+        </div></div>
         <label class="check" id="repeatRow"><input type="checkbox" id="repeat"> Repeat every month</label>
         <div class="row">
           <button type="submit" class="btn primary" id="submitBtn">Add expense</button>

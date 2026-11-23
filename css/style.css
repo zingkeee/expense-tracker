@@ -175,3 +175,24 @@ dialog::backdrop{background:rgba(10,11,16,.55);backdrop-filter:blur(4px)}
   @keyframes grow{from{transform:scaleY(0)}}
   @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--blue) 55%,transparent)}100%{box-shadow:0 0 0 16px transparent}}
 }
+
+/* ---- category pills + optional note ---- */
+.cat-field{border:0;padding:0;margin:0;min-width:0}
+.cat-field legend{font-weight:600;font-size:.86rem;margin-bottom:8px;padding:0}
+.cats{display:flex;flex-wrap:wrap;gap:8px}
+.cat{display:block;position:relative}
+.cat input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;min-height:0;border:0;padding:0}
+.cat span{display:block;padding:8px 14px;border-radius:999px;font-weight:600;font-size:.9rem;border:2px solid transparent;background:hsl(var(--h) 80% 90%);color:hsl(var(--h) 65% 22%);transition:transform .15s,border-color .15s}
+@media(prefers-color-scheme:dark){.cat span{background:hsl(var(--h) 40% 24%);color:hsl(var(--h) 90% 90%)}}
+.cat input:checked+span{border-color:var(--fg);font-weight:700;transform:scale(1.06)}
+.cat input:focus-visible+span{outline:3px solid var(--fg);outline-offset:2px}
+@media(hover:hover){.cat input:not(:checked)+span:hover{transform:translateY(-2px)}}
+.hint{color:var(--bad);font-size:.85rem;font-weight:600;margin-top:8px}
+.note-row{display:grid;grid-template-rows:0fr;opacity:0;visibility:hidden;margin-top:-12px;transition:grid-template-rows .3s ease,opacity .3s ease,margin .3s ease,visibility 0s .3s}
+.note-row.open{grid-template-rows:1fr;opacity:1;visibility:visible;margin-top:0;transition-delay:0s}
+.note-inner{overflow:hidden;min-height:0}
+@media(prefers-reduced-motion:no-preference){
+  .shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+}
+@media(prefers-reduced-motion:reduce){.note-row{transition:none}}

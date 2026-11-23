@@ -18,6 +18,15 @@
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></symbol>
 <symbol id="i-repeat" viewBox="0 0 24 24"><path d="m17 2 4 4-4 4M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4M21 13v2a3 3 0 0 1-3 3H3"/></symbol>
 <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M4 21h16"/></symbol>
+<symbol id="i-in" viewBox="0 0 24 24"><path d="M17 7 7 17M17 17H7V7"/></symbol>
+<symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"/><path d="M16 14.5h.01"/></symbol>
+<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="M12 12h.01"/></symbol>
+<symbol id="i-pie" viewBox="0 0 24 24"><path d="M21 12A9 9 0 1 1 12 3v9z"/><path d="M15 3.5A9 9 0 0 1 20.5 9H15z"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><path d="m3 17 6-6 4 4 8-8M15 7h6v6"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
 </defs></svg>
 
 <main class="app">
@@ -32,32 +41,37 @@
 
   <div class="bento">
     <section class="tile t-spent" aria-label="Spent this month">
-      <p class="lbl">Spent</p>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-out"/></svg></span><p class="lbl">Spent</p></div>
       <p class="big" id="spent">₱0.00</p>
       <p class="note" id="spentNote"></p>
+      <div class="spark" id="spark" aria-hidden="true"></div>
     </section>
 
     <section class="tile t-income" aria-label="Income this month">
-      <p class="lbl">Money in</p>
-      <p class="num" id="income">₱0.00</p>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-in"/></svg></span><p class="lbl">Money in</p></div>
+      <div><p class="num" id="income">₱0.00</p><p class="note" id="incomeNote"></p></div>
     </section>
 
     <section class="tile t-balance" aria-label="Balance this month">
-      <p class="lbl">Left over</p>
-      <p class="num" id="balance">₱0.00</p>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-wallet"/></svg></span><p class="lbl">Left over</p></div>
+      <div><p class="num" id="balance">₱0.00</p><p class="note" id="balanceNote"></p></div>
     </section>
 
     <section class="tile t-budget" aria-label="Budget">
-      <div class="split">
-        <h2>Budget</h2>
+      <div class="budget-top">
+        <div class="thead"><span class="badge"><svg class="ic"><use href="#i-target"/></svg></span><h2>Budget</h2></div>
         <label class="budget">Monthly limit (₱)<input type="number" id="budget" min="0" step="0.01" inputmode="decimal" placeholder="e.g. 5000"></label>
       </div>
-      <div class="meter" role="progressbar" aria-label="Budget used" aria-valuemin="0" aria-valuemax="100" id="meter"><span id="meterFill"></span></div>
+      <div class="meterwrap" id="meterWrap">
+        <div class="meter" role="progressbar" aria-label="Budget used" aria-valuemin="0" aria-valuemax="100" id="meter"><span class="fill" id="meterFill"></span></div>
+        <i class="mark"></i><span class="zl z80" id="z80">80%</span><span class="zl lim">Limit</span>
+      </div>
       <p id="budgetMsg" class="budget-msg">Set a monthly budget to track it.</p>
+      <p id="dailyMsg" class="muted"></p>
     </section>
 
     <section class="tile t-form" aria-labelledby="formTitle">
-      <h2 id="formTitle">Add entry</h2>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-plus"/></svg></span><h2 id="formTitle">Add entry</h2></div>
       <form id="form">
         <div class="seg" role="radiogroup" aria-label="Entry type">
           <label><input type="radio" name="type" value="expense" checked><span>Expense</span></label>
@@ -78,34 +92,62 @@
     </section>
 
     <section class="tile t-cat" aria-labelledby="chartTitle">
-      <h2 id="chartTitle">Where it went</h2>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-pie"/></svg></span><h2 id="chartTitle">Where it went</h2></div>
       <p class="muted" id="catEmpty" hidden>No spending this month.</p>
       <div id="catWrap" class="chart"><canvas id="catCanvas" role="img" aria-label="Spending by category"></canvas></div>
       <p class="muted" id="chartNote"></p>
     </section>
 
     <section class="tile t-list" aria-labelledby="listTitle">
-      <h2 id="listTitle">Entries</h2>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-list"/></svg></span><h2 id="listTitle">Entries</h2></div>
       <div class="filters">
         <select id="filterCategory" aria-label="Filter by category"><option value="">All categories</option></select>
         <input type="search" id="search" placeholder="Search notes" aria-label="Search notes">
         <button type="button" class="btn" id="exportBtn"><svg class="ic"><use href="#i-down"/></svg>CSV</button>
       </div>
       <ul id="list" class="list"></ul>
-      <p id="empty" class="muted" hidden>Nothing here yet. Add your first entry.</p>
+      <div id="empty" class="empty" hidden>
+        <svg viewBox="0 0 96 78" class="coins" aria-hidden="true">
+          <g stroke="var(--fg)" stroke-width="2" stroke-linejoin="round">
+            <path d="M14 56v10a34 10 0 0 0 68 0V56z" fill="var(--blue)"/><ellipse cx="48" cy="56" rx="34" ry="10" fill="var(--blue)"/>
+            <path d="M14 42v10a34 10 0 0 0 68 0V42z" fill="var(--mint)"/><ellipse cx="48" cy="42" rx="34" ry="10" fill="var(--mint)"/>
+            <path d="M14 28v10a34 10 0 0 0 68 0V28z" fill="var(--lemon)"/><ellipse cx="48" cy="28" rx="34" ry="10" fill="var(--lemon)"/>
+          </g>
+        </svg>
+        <p id="emptyMsg">Nothing here yet.</p>
+        <button type="button" class="btn small" id="emptyBtn"><svg class="ic"><use href="#i-plus"/></svg>Add an entry</button>
+      </div>
     </section>
 
     <section class="tile t-trend" aria-labelledby="trendTitle">
-      <h2 id="trendTitle">Last 6 months</h2>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-trend"/></svg></span><h2 id="trendTitle">Last 6 months</h2></div>
       <div class="chart tall"><canvas id="trendCanvas" role="img" aria-label="Income and spending, last 6 months"></canvas></div>
     </section>
 
     <section class="tile t-repeat" id="repeatPanel" aria-labelledby="repTitle" hidden>
-      <h2 id="repTitle">Repeats every month</h2>
+      <div class="thead"><span class="badge"><svg class="ic"><use href="#i-repeat"/></svg></span><h2 id="repTitle">Repeats every month</h2></div>
       <ul class="list" id="repeatList"></ul>
     </section>
   </div>
+
+  <footer class="foot"><svg class="ic"><use href="#i-lock"/></svg>Saved on this device only. Nothing is sent anywhere.</footer>
 </main>
+<dialog id="confirmDlg" aria-labelledby="cdTitle">
+  <form method="dialog" class="cd">
+    <span class="cd-badge"><svg class="ic"><use href="#i-trash"/></svg></span>
+    <h2 id="cdTitle">Delete this entry?</h2>
+    <div class="cd-item">
+      <span class="chip" id="cdChip" aria-hidden="true"></span>
+      <div><p class="cd-cat" id="cdCat"></p><p class="muted" id="cdMeta"></p></div>
+      <p class="cd-amt" id="cdAmt"></p>
+    </div>
+    <p class="muted">This can't be undone.</p>
+    <div class="row cd-actions">
+      <button class="btn" value="cancel" autofocus>Keep it</button>
+      <button class="btn solid" value="ok">Delete</button>
+    </div>
+  </form>
+</dialog>
 <div id="toast" role="status"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="js/storage.js"></script>
